@@ -1,0 +1,15 @@
+holiday-display
+===============
+
+A front-yard holiday LED display: a 6 ft x 4 ft frame of 54 x 36 WS2812B pixels, homemade with the kids.
+Halloween first (target 2026-10-31), then other holidays.
+
+Layout
+  notes.txt      design decisions, and proposals not yet decided
+  agents/        work by Michael's agents (see below)
+    sim/         pixelframe.py: a simulated frame in plain Python (draw, save a PNG of the LEDs, estimate
+                 current); jack.py draws the jack-o'-lantern with it (python3 jack.py -> jack.png, jack.txt)
+
+agents/
+  Agents commit there under their own names, at will.  They clean up that history when Michael asks.
+  Everything else in the repo is committed by Michael.  Only Michael pushes.

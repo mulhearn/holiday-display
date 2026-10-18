@@ -1,0 +1,21 @@
+Front-yard holiday LED display: design notes (Michael's decisions; proposals marked)
+====================================================================================
+
+Decided (2026-10-18, with Michael)
+  - Homemade look: wooden frame, LED strips hung as columns, wired in a zigzag; pixels need not be precise.
+  - About 4 ft x 6 ft.
+  - Strip: WS2812B, 5 V, 30 LEDs/m (1.3" down a column), outdoor (IP65 or IP67), from Amazon.
+    No backup data line: a dead LED darkens the rest of its chain until repaired; that's acceptable
+    ("it's a holiday lawn display").  Keep a spare reel and soldering kit.
+  - Michael solders the column joins.
+  - 6 ft wide x 4 ft tall, square pixels: 54 x 36 at 1.3" (strip pitch both ways), 1944 pixels,
+    14 reels of 5 m (4 columns of 36 per reel).  Square chosen for educational value.
+  - Art as text grids, one character per pixel (agents/sim/jack.txt); agents/sim/pixelframe.py previews them as LEDs.
+
+Proposed, not yet decided
+  - ESP32 running WLED drives the strip (3 chains, 74AHCT125 level shifter); a Pi sends content over Wi-Fi.
+  - 5 V 40 A supply (or 2 x 20 A), brightness capped ~20 A in software; 12 AWG bus on the top bar, every column fed;
+    fuse per ~6 columns.
+  - Diffuser: white fabric or shade cloth a few inches in front; frame must handle wind.
+  - Kids: build and paint the frame, test reels, draw pixel art from a phone (web page), trigger scenes live.
+  - Which Pi: rpi-kids or a separate one.
