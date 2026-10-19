@@ -1,0 +1,17 @@
+Amazon order 2: the rest, after the pilot (phase 1 = full panel, 14 modules), 2026-10-19
+=========================================================================================
+
+Links checked by henderson; prices as read 2026-10-18/19.  Nothing ordered yet.  Order 1 (pilot): amazon-pilot.txt.
+DigiKey: digikey-order-v1.csv (HLG-600H-12B supply, SN74AHCT125N, 5 A fuses).  Lumber, cord, Trenz: on hand.
+
+ qty  item                                                      each     total   link
+  14  BTF-LIGHTING WS2815, 12 V, 5 m, 150 LEDs, IP65, gold    $29.99  $419.86   https://www.amazon.com/dp/B07LG54F4W
+      wire, backup data (13 modules + 1 spare)
+   1  TUOFENG 18 AWG silicone wire, tinned copper,            $16.99   $16.99   https://www.amazon.com/dp/B07FMWNF3J
+      50 ft red + 50 ft black per pack
+   2  8-circuit ATO/ATC fuse block, #8-32 outputs, #10-32     $23.99   $47.98   https://www.amazon.com/dp/B0F7P88MZ2
+      stud, cover
+   2  RVBOATPAT ground bus bar, 12 x #8 screws, 1/4" stud,     $9.98   $19.96   https://www.amazon.com/dp/B0F6SC5C3Q
+      cover
+                                                                       -------
+                                                             order 2  $504.79

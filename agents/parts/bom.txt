@@ -1,0 +1,49 @@
+Holiday display: bill of materials, phase 1, 2026-10-19 (rev 6)
+===============================================================
+
+Nothing ordered yet.  Prices read 2026-10-18/19 unless "est.".  Lumber not included (Michael has it).
+Phase 1 = the full panel: 14 four-column modules (one reel each) + 1 spare reel; one supply; WLED caps brightness
+at 50% (up to ~75% is comfortable for the supply).  Strip: WS2815 12 V with backup data line.
+One power feed per module (input end); check the far end on the first module (spare pigtail if needed).  No capacitors
+(rule: switch off before plugging or unplugging a module).
+
+AGREED
+ LEDs and mounting
+  15  BTF-LIGHTING WS2815 12 V reels, 150 LEDs, IP65, gold wire, backup data,
+      $29.99 (14 modules + 1 spare)                                      Amazon B07LG54F4W   $449.85
+   2  BTF-LIGHTING transparent strip clips, 12 mm, 100 + screws per pack Amazon B0DM8VL3R4    $27.98
+ Wire and sealing
+   2  TUOFENG 18 AWG silicone wire, 50 ft red + 50 ft black per pack     Amazon B07FMWNF3J    $33.98
+      (one power pair per module, input end only (12 V, constant-current LEDs); corner jumpers,
+      4 wires: +12 V, data, backup data, ground; data run to module 1)
+   1  XHF heat shrink 1/2" 3:1 adhesive-lined, 10 ft (84 strip-end seals) Amazon B0919K23RX     $6.29
+   1  XHF heat shrink 3/16" 3:1 adhesive-lined, 20 ft (~60 wire joints)  Amazon B0919F4YFZ     $7.99
+ Data: modules plug together (factory 4-pin plugs); one twisted 18 AWG data + ground run to module 1.
+ Controller (phase 1: a Trenz Zynq module on hand drives the single daisy chain)
+   5  SN74AHCT125N level shifter (3.3 V Zynq pin -> 5 V data), DIP-14  DigiKey v1            $5.00
+      on a breadboard; 0.1 uF and ~330 ohm scrounged; first module's backup-data input (BI) to ground;
+      Trenz ground joined to the strip ground.
+ Power
+   1  Mean Well HLG-600H-12B, 12 V 40 A 480 W, IP67, fanless, 90-305 VAC  DigiKey v1          $209.00
+      (on the frame, cord straight in; dimming wires capped, unused)
+   2  8-circuit ATO/ATC fuse blocks, #8-32 outputs, #10-32 stud, cover   Amazon B0F7P88MZ2    $47.98
+      (one fuse per module, all at the supply; 2 circuits spare)
+   2  RVBOATPAT ground bus bars, 12 x #8 screws, 1/4" stud, cover        Amazon B0F6SC5C3Q    $19.96
+  20  Littelfuse 0287005.PXCN 5 A ATO module fuses (3 A/module max at 12 V) DigiKey v1           $6.66
+                                                                        agreed subtotal      $814.69
+
+LATER, AT HOME DEPOT (once the parts are here to lay out)
+      supply-to-block links (12-10 AWG) and ring terminals (#10 and 1/4" studs);
+      #8 ring/fork terminals for the 18 AWG module runs (~50, heat-shrink sealed);
+      plug-ended cord and a weatherproof splice for the HLG's AC leads;
+      a covered spot / weatherproof box for the fuse blocks and bus bars.
+
+REMOVED
+      WS2812B reels and the 5 V design; LRS-350-5; second supply; capacitors; in-line fuse holders; 10 AWG bus;
+      Cat5e and patch panel; WAGO data splices; 16 AWG wire; 22 AWG kit; heat shrink kit; Hammond boxes;
+      phase-two SN74AHCT245N and sockets; IEC inlet and its fuses; PG7 glands; WAGO 221-615; ESP32 DevKits, USB cables, perfboard, controller-board parts
+      (Trenz on hand instead).
+
+TALLY, phase 1
+  agreed $814.69 (Amazon $594.03 + DigiKey v1 $220.66), before shipping and tax; Home Depot items extra
+  Note: rev 5's agreed subtotal was $17.29 low (the third 18 AWG pack was not added); corrected here.

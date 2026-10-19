@@ -1,0 +1,4 @@
+Quantity,Manufacturer Part Number,Manufacturer,Customer Reference,Description,Check
+1,HLG-600H-12B,MEAN WELL,Power supply,"LED driver, 12 V 40 A 480 W, IP67, universal 90-305 VAC input, fanless (DigiKey 1866-2567-ND); dimming wires unused (cap and insulate; open = full output)",$209.00; 15 in stock per page read 2026-10-19
+5,SN74AHCT125N,Texas Instruments,U1 level shifter,"Quad buffer, DIP-14 (controller, bench tester, spares)",
+20,0287005.PXCN,Littelfuse,Module fuses,ATO blade fuse 5 A 32 V (DigiKey F4197-ND): one per module (3 A max at 12 V full white; 5 A >= 125%),$0.333 at 10+; 65927 in stock per page read 2026-10-19

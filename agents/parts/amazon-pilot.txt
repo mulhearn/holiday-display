@@ -1,0 +1,21 @@
+Amazon order 1: pilot (one module), 2026-10-19
+==============================================
+
+Build and test one module before ordering the rest (pitch, clip fit, plugs, corners, single feed at 12 V,
+Trenz -> 74AHCT125 -> WS2815).  Clips and heat shrink here are the full build's quantities.
+
+ qty  item                                                      each     total   link
+   1  BTF-LIGHTING WS2815, 12 V, 5 m, 150 LEDs, IP65, gold    $29.99   $29.99   https://www.amazon.com/dp/B07LG54F4W
+      wire, backup data
+   1  TUOFENG 18 AWG silicone wire, tinned copper,            $16.99   $16.99   https://www.amazon.com/dp/B07FMWNF3J
+      50 ft red + 50 ft black
+   1  XHF heat shrink 1/2", 3:1 adhesive-lined, black, 10 ft   $6.29    $6.29   https://www.amazon.com/dp/B0919K23RX
+      (all 84 strip-end seals)
+   1  XHF heat shrink 3/16", 3:1 adhesive-lined, black, 20 ft  $7.99    $7.99   https://www.amazon.com/dp/B0919F4YFZ
+      (all wire-to-pigtail joints)
+   2  BTF-LIGHTING transparent strip clips, 12 mm, 100        $13.99   $27.98   https://www.amazon.com/dp/B0DM8VL3R4
+      clips + screws (all 168 + spares)
+   1  SN74AHCT125N DIP-14, 10-pack (generic; level shifter     $7.99    $7.99   https://www.amazon.com/dp/B08R6BCSYC
+      for the pilot: Trenz 3.3 V -> 5 V data)
+                                                                       -------
+                                                             pilot     $97.23
