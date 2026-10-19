@@ -1,0 +1,28 @@
+% Corner joint detail: two strip ends (cut), four 18 AWG jumpers, heat-shrink seals.
+\begin{tikzpicture}[font=\footnotesize,
+    callout/.style={-{Stealth[length=4pt]}, thin}]
+  % strips: column 1 end (left, data arriving from above) and column 2 start (right, data leaving upward)
+  \foreach \x/\lab in {0/{column 1 (end)}, 4.2/{column 2 (start)}} {
+    \fill[black!75] (\x,0.9) rectangle (\x+1.8,6);
+    \foreach \y in {4.9,3.4} { \fill[white] (\x+0.6,\y) rectangle (\x+1.2,\y+0.6); }
+    \node[above] at (\x+0.9,6) {\lab};
+    % heat shrink seal over the cut end
+    \fill[gray!40, opacity=0.85] (\x-0.12,0.4) rectangle (\x+1.92,2.2);
+    \draw[gray!60!black] (\x-0.12,0.4) rectangle (\x+1.92,2.2);
+  }
+  % pads at the cut ends (labels per side) and jumpers
+  \foreach \i/\ll/\rl/\col in {0/{+12V}/{+12V}/red, 1/{DO}/{DI}/green!50!black, 2/{BO}/{BI}/blue!70!black, 3/{GND}/{GND}/black} {
+    \pgfmathsetmacro{\px}{0.2+\i*0.45}
+    \fill[orange!80!black] (\px-0.12,0.95) rectangle (\px+0.12,1.35);
+    \fill[orange!80!black] (4.2+\px-0.12,0.95) rectangle (4.2+\px+0.12,1.35);
+    \node[font=\tiny, white, rotate=90, anchor=west] at (\px,1.45) {\ll};
+    \node[font=\tiny, white, rotate=90, anchor=west] at (4.2+\px,1.45) {\rl};
+    \pgfmathsetmacro{\d}{-0.8-\i*0.35}
+    \draw[\col, very thick, rounded corners=2pt] (\px,0.95) -- (\px,\d) -- (4.2+\px,\d) -- (4.2+\px,0.95);
+  }
+  \draw[callout] (8.0,-1.3) node[right, align=left] {jumpers \id{WIR-1}, 18 AWG:\\+12 V, data DO$\to$DI,\\backup BO$\to$BI, ground} -- (6.0,-1.15);
+  \draw[callout] (8.0,1.3) node[right, align=left] {1/2'' adhesive heat\\shrink \id{HS-1} over\\each cut end} -- (6.15,1.3);
+  \draw[callout] (-1.0,5.2) node[left, align=right] {\id{LED-1}} -- (0,5.2);
+  \node[gray, font=\scriptsize, align=center] at (3.0,4.6) {33.3 mm\\column pitch};
+  \draw[gray, {Stealth[length=3pt]}-{Stealth[length=3pt]}] (0.9,4.0) -- (5.1,4.0);
+\end{tikzpicture}

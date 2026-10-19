@@ -1,0 +1,37 @@
+% Top rail, front view: module inputs/outputs, data chain, home runs from the covered box behind the middle.
+\begin{tikzpicture}[x=0.21cm, y=0.21cm, font=\footnotesize,
+    callout/.style={-{Stealth[length=4pt]}, thin}]
+  \def\p{1.3123}
+  % top rail
+  \fill[brown!25] (0,0) rectangle (73.5,3.5);
+  \draw (0,0) rectangle (73.5,3.5);
+  % covered box behind the middle of the top rail
+  \fill[gray!35] (30.75,5.5) rectangle (42.75,11.5);
+  \draw (30.75,5.5) rectangle (42.75,11.5);
+  \node[font=\scriptsize, align=center] at (36.75,8.5) {\id{HD-5}: \id{FB-1}$\times$2, \id{BB-1}$\times$2\\(\id{PS-1} beside it)};
+  % modules: input at column 4k (left), output at column 4k+3
+  \foreach \k in {0,...,13} {
+    \pgfmathsetmacro{\xi}{(4*\k+0.5)*\p}
+    \pgfmathsetmacro{\xo}{(4*\k+3.5)*\p}
+    \pgfmathtruncatemacro{\n}{\k+1}
+    \draw[thick] (\xi,1.5) -- (\xo,1.5);
+    \fill (\xi,1.5) circle (0.45);
+    \fill[white] (\xo,1.5) circle (0.45); \draw (\xo,1.5) circle (0.45);
+    \node[font=\tiny, below] at ({(\xi+\xo)/2},-0.4) {M\ifnum\n<10 0\fi\n};
+    % home run from the box to the input
+    \draw[red!70!black] (36.75,5.5) .. controls (36.75,4.5) and (\xi,4.8) .. (\xi,1.95);
+  }
+  % data chain: output of k to input of k+1 (adjacent)
+  \foreach \k in {0,...,12} {
+    \pgfmathsetmacro{\xo}{(4*\k+3.5)*\p}
+    \pgfmathsetmacro{\xn}{(4*\k+4.5)*\p}
+    \draw[green!45!black, thick, -{Stealth[length=3pt]}] (\xo+0.45,1.5) -- (\xn-0.45,1.5);
+  }
+  % scale
+  \foreach \x in {0,12,24,36,48,60,72} { \draw (\x,-3.0) -- (\x,-3.6); \node[font=\tiny, below] at (\x,-3.6) {\x}; }
+  \draw (0,-3.0) -- (73.5,-3.0);
+  % callouts
+  \draw[callout] (8,12) node[above, align=center] {home runs \id{WIR-1} (18 AWG pairs)} -- (6,4.4);
+  \draw[callout] (62,12) node[above, align=center] {module input: power + data in (filled);\\output plug to next input (open)} -- ({(52+0.5)*\p},2.0);
+  \node[font=\scriptsize, align=center, gray] at (36.75,-7.5) {longest run: about 36 in to M01/M14 plus routing, $\le$ 1.5 m};
+\end{tikzpicture}

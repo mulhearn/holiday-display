@@ -1,0 +1,49 @@
+% Frame, front elevation, to scale (units: inches).
+% Outside 77 x 59; 2x6 (1.5 thick); rails 2x4 standing up (3.5 high); 28 slats 1x2 (1.5 wide) at 2 columns
+% (2 x 1.3123 in) pitch; LED area 56 x 37 at 1.3123 in pitch = 73.49 x 48.56, centered in the 74 x 56 inside.
+\begin{tikzpicture}[x=0.15cm,y=0.15cm, font=\footnotesize,
+    callout/.style={-{Stealth[length=4pt]}, thin},
+    dim/.style={{Stealth[length=3pt]}-{Stealth[length=3pt]}, thin}]
+  \def\p{1.3123}      % column pitch, inches
+  \def\xl{1.75}       % LED area left edge
+  \def\yb{5.22}       % LED area bottom
+  \def\yt{53.78}      % LED area top
+  % rails (behind the slats)
+  \fill[brown!25] (1.5,1.5) rectangle (75.5,5.0);
+  \fill[brown!25] (1.5,54.0) rectangle (75.5,57.5);
+  \draw (1.5,1.5) rectangle (75.5,5.0);
+  \draw (1.5,54.0) rectangle (75.5,57.5);
+  % slats
+  \foreach \s in {0,...,27} {
+    \pgfmathsetmacro{\xc}{\xl + (2*\s+1)*\p}
+    \fill[brown!45] (\xc-0.75,1.5) rectangle (\xc+0.75,57.5);
+    \draw[brown!70!black] (\xc-0.75,1.5) rectangle (\xc+0.75,57.5);
+  }
+  % 2x6 box
+  \draw[very thick] (0,0) rectangle (77,59);
+  \draw (1.5,1.5) rectangle (75.5,57.5);
+  \draw (0,1.5) -- (1.5,1.5) (75.5,1.5) -- (77,1.5) (0,57.5) -- (1.5,57.5) (75.5,57.5) -- (77,57.5);
+  % LED area
+  \draw[dashed, red!70!black, thick] (\xl,\yb) rectangle (\xl+56*\p,\yt);
+  % module labels and boundaries
+  \foreach \k in {0,...,13} {
+    \pgfmathsetmacro{\xm}{\xl + (4*\k+2)*\p}
+    \pgfmathtruncatemacro{\n}{\k+1}
+    \node[font=\tiny, above] at (\xm,59.3) {M\ifnum\n<10 0\fi\n};
+  }
+  \foreach \k in {1,...,13} {
+    \pgfmathsetmacro{\xb}{\xl + 4*\k*\p}
+    \draw[densely dotted, gray] (\xb,59) -- (\xb,61.5);
+  }
+  % dimensions
+  \draw[dim] (0,-3) -- node[below] {77} (77,-3);
+  \draw[dim] (\xl,-7.5) -- node[below] {LED area 73.5 (56 columns)} (\xl+56*\p,-7.5);
+  \draw[dim] (80,0) -- node[midway, fill=white, inner sep=1pt, rotate=90] {59} (80,59);
+  \draw[dim] (-3,\yb) -- node[left, align=right] {LED\\area\\48.6\\(37 rows)} (-3,\yt);
+  \draw[dim] (84.5,1.5) -- node[pos=0.25, fill=white, inner sep=1pt, rotate=90] {56 inside} (84.5,57.5);
+  % callouts
+  \draw[callout] (88.5,64) node[right] {\id{FR-1} 2x6} -- (76.2,58.4);
+  \draw[callout] (88.5,50) node[right] {\id{FR-2} rail} -- (74,55.8);
+  \draw[callout] (88.5,10) node[right] {\id{FR-2} rail} -- (74,3.2);
+  \draw[callout] (88.5,38) node[right] {\id{FR-3} slat} -- (\xl+55*\p,38);
+\end{tikzpicture}

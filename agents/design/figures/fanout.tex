@@ -1,0 +1,53 @@
+% Power fan-out: mains -> PS-1 -> links -> two fuse blocks (5 A per module) -> home runs (red) to the modules;
+% returns (black) from the modules to two ground bus bars on the far side; data chain (dashed) between modules.
+\begin{tikzpicture}[font=\footnotesize,
+    box/.style={draw, thick, rounded corners=2pt, align=center, inner sep=4pt},
+    mod/.style={draw, thick, rounded corners=2pt, font=\scriptsize, minimum width=1.2cm, minimum height=0.36cm,
+                inner sep=1pt, fill=black!80, text=white},
+    pwr/.style={thick, red!80!black},
+    gnd/.style={thick, black},
+    dat/.style={thick, dashed, green!45!black, -{Stealth[length=4pt]}}]
+  \def\row{0.56}
+  % mains and supply
+  \node[box] (outlet) at (0,0.6) {GFCI outlet\\120 V AC};
+  \node[box] (splice) at (0,-1.4) {splice \id{HD-4}};
+  \node[box, minimum width=2.6cm, minimum height=1.4cm, fill=gray!15] (ps) at (0,-4.4) {\id{PS-1}\\HLG-600H-12B\\12 V, 40 A, IP67};
+  \draw[thick] (outlet) -- node[right] {cord \id{HD-3}} (splice);
+  \draw[thick] (splice) -- (ps);
+  % two groups: block A (M01-M07) and block B (M08-M14)
+  \foreach \blk/\ytop/\first in {A/0/1, B/-5.0/8} {
+    \node[box, minimum width=1.9cm, minimum height={8*\row cm}, fill=red!5, anchor=north] (fb\blk) at (4.0,\ytop+0.15) {};
+    \node[above] at (fb\blk.north) {\id{FB-1} block \blk};
+    \node[box, minimum width=0.6cm, minimum height={8*\row cm}, fill=gray!20, anchor=north] (bb\blk) at (11.6,\ytop+0.15) {};
+    \node[above] at (bb\blk.north) {\id{BB-1}};
+    \foreach \j in {0,...,7} {
+      \pgfmathsetmacro{\y}{\ytop - 0.2 - \j*\row}
+      \pgfmathtruncatemacro{\m}{\first+\j}
+      \ifnum\j<7
+        \fill[yellow!70!orange] (3.95,\y-0.09) rectangle (4.45,\y+0.09);
+        \node[font=\tiny, left] at (3.9,\y) {\id{FU-1}};
+        \draw[pwr] (4.45,\y) -- (8.4,\y);
+        \node[mod] (M\m) at (9.0,\y) {M\ifnum\m<10 0\fi\m};
+        \draw[gnd] (9.6,\y) -- (11.3,\y);
+      \else
+        \node[font=\tiny, gray] at (4.0,\y) {spare circuit};
+      \fi
+    }
+  }
+  % links from the supply: + to both blocks, - to both bus bars
+  \draw[pwr] (ps.east) ++(0,0.3) -- (2.4,-4.1) coordinate (r0);
+  \draw[pwr] (r0) |- (fbA.west);
+  \draw[pwr] (r0) |- (fbB.west);
+  \node[red!80!black, font=\scriptsize, above] at (2.05,-4.1) {\id{HD-1}};
+  \draw[gnd] (ps.south) -- ++(0,-5.6) -| (bbB.south);
+  \draw[gnd] (bbB.north) -- (bbA.south);
+  \node[font=\scriptsize, below] at (6.2,-10.0) {links \id{HD-1} (supply $-$V to the bus bars)};
+  \node[font=\scriptsize, align=center] at (6.4,1.1) {home runs \id{WIR-1}: 18 AWG pair per module\\(red: fused +12 V; black: return)};
+  % data chain: controller -> M01, then module to module through the plugs
+  \node[box, dashed, green!45!black] (ic) at (9.0,2.4) {controller,\\level shifter \id{IC-1}};
+  \draw[dat] (ic.south) -- (M1.north);
+  \foreach \a/\b in {1/2,2/3,3/4,4/5,5/6,6/7,7/8,8/9,9/10,10/11,11/12,12/13,13/14} {
+    \draw[dat] (M\a.south) -- (M\b.north);
+  }
+  \node[green!45!black, font=\scriptsize, align=left, right] at (9.15,-4.45) {data: plug to plug};
+\end{tikzpicture}

@@ -1,0 +1,253 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,decorations.pathreplacing,patterns}
+\usepackage[siunitx]{circuitikz}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\usepackage{enumitem}
+\usepackage[section]{placeins}
+\setlist{nosep,leftmargin=*}
+
+\sisetup{per-mode=symbol}
+\newcommand{\id}[1]{\textsf{\textbf{#1}}}  % inventory ID, as used in the figures
+
+\title{Front-yard holiday LED display\\[2pt]\large Design: frame, W-modules, power fan-out}
+\author{henderson (with Michael Mulhearn)}
+\date{2026-10-19, phase~1}
+
+\begin{document}
+\maketitle
+
+\noindent Inventory IDs in \id{bold sans} (e.g.\ \id{LED-1}) refer to the bill of materials in
+Section~\ref{sec:bom} and appear in the figures.  The controller (Trenz Zynq module and level shifter) is
+described separately; this document stops at the data input of the first module.
+
+\section{Overview}
+
+\begin{itemize}
+  \item \textbf{Panel:} $56 \times 37$ square pixels at \SI{33.3}{mm} (\SI{1.31}{in}) pitch, the pitch of a
+    30-LED/m strip, both across and down: an LED area of $\SI{73.5}{in} \times \SI{48.6}{in}$, 2072 pixels.
+  \item \textbf{Strip:} WS2815, \SI{12}{V}, 30~LEDs/m, IP65 (\id{LED-1}); every LED individually addressable,
+    with a backup data line (a dead LED does not darken the rest of the chain).
+  \item \textbf{Modules:} 14 identical four-column \emph{W-modules}, one \SI{5}{m} reel each (148 of its 150
+    LEDs), plus one spare reel.
+  \item \textbf{Power:} one sealed Mean Well HLG-600H-12B (\id{PS-1}, \SI{12}{V} \SI{40}{A} \SI{480}{W}, IP67);
+    one \SI{5}{A} fuse and one 18~AWG home run per module.
+  \item \textbf{Brightness cap:} 50\,\% in software (WLED or our own); up to about 75\,\% stays comfortable for
+    the supply (Section~\ref{sec:numbers}).
+  \item \textbf{Phase 1} is the full panel.  A pilot (one module, Section~\ref{sec:pilot}) comes first.
+\end{itemize}
+
+\section{Frame}
+
+The frame is a box of 2x6 on edge (\id{FR-1}), sized to the LED area plus clearance, with a 2x4 rail
+standing up across the inside at top and bottom (\id{FR-2}) and one 1x2 slat (\id{FR-3}) per two columns,
+screwed to the front of both rails (Figures~\ref{fig:frame-front} and~\ref{fig:frame-section}).
+\begin{itemize}
+  \item \textbf{Outside} about $\SI{77}{in} \times \SI{59}{in} \times \SI{5.5}{in}$; inside
+    $\SI{74}{in} \times \SI{56}{in}$.  Lumber: 8~ft boards only, scrap used elsewhere.
+  \item \textbf{Rails} (\id{FR-2}): 2x4 standing up (\SI{3.5}{in} high, \SI{1.5}{in} deep), set back from the
+    front so that slat, strip and an optional diffuser fit within the box depth.  The top rail area carries
+    the connections; the bottom rail only holds the slats.
+  \item \textbf{Slats} (\id{FR-3}): 28 1x2 ($\SI{0.75}{in} \times \SI{1.5}{in}$), each about \SI{56}{in} long,
+    at a pitch of two columns (\SI{66.7}{mm}); each carries two columns \SI{33.3}{mm} apart, centered.  The
+    \SI{10}{mm} strips overhang the \SI{38}{mm} slat by about \SI{3}{mm} each side, which is fine.  A spacing jig
+    on the rails keeps the pitch; gaps of about \SI{29}{mm} leave the panel about 40\,\% open to wind and air.
+  \item \textbf{Clips} (\id{MNT-1}): three per column (top, middle, bottom), screwed to the slat; 12~mm clips for
+    the 10~mm strip in its IP65 coat.
+  \item \textbf{Weather:} a rain cover with a drip edge over the top; all connections in the top rail area,
+    under it.  The supply (\id{PS-1}) is sealed and mounts on a backing plate behind the top rail; the fuse
+    blocks and bus bars sit in a covered box beside it (\id{HD-5}).
+  \item \textbf{Mounting:} on the low masonry wall in front of the house: a shoe over the wall cap, ropes from
+    the top corners to the eaves (against falling forward), struts behind (against falling back); lay it flat
+    in storms.
+  \item \textbf{Measure first:} the frame's dimensions assume a \SI{33.3}{mm} pitch.  Measure the pilot reel
+    over 37 LEDs before cutting the 2x6.
+\end{itemize}
+
+\begin{figure}[!htbp]
+  \centering
+  \input{figures/frame-front}
+  \caption{Frame, front elevation (to scale).  2x6 box \id{FR-1}, rails \id{FR-2}, 28 slats \id{FR-3} (two per
+    module, M01--M14), LED area dashed.  Dimensions in inches.}
+  \label{fig:frame-front}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \input{figures/frame-section}
+  \caption{Frame, vertical section through a slat (not to scale; depths in inches, proposed).  From the front:
+    optional diffuser, air gap, strip \id{LED-1} in its clip \id{MNT-1}, slat \id{FR-3}, rail \id{FR-2}, then
+    space for wiring behind.  The supply \id{PS-1} and the covered box \id{HD-5} sit behind the top rail.}
+  \label{fig:frame-section}
+\end{figure}
+
+\section{W-module}
+
+Each module is one reel (\id{LED-1}) folded into four columns of 37 LEDs (Figure~\ref{fig:w-module}):
+\begin{itemize}
+  \item \textbf{Path:} the data enters at the top of column~1 and runs down; corner C1 (bottom) turns it up
+    column~2; corner C2 (top) down column~3; corner C3 (bottom) up column~4; it leaves at the top of
+    column~4.  Input and output are both at the top, \SI{100}{mm} apart.
+  \item \textbf{Spare LEDs:} $4 \times 37 = 148$ of 150.  The two spare LEDs are cut out at corner C1, so both
+    factory ends, with their 4-pin plugs, stay on the module.
+  \item \textbf{Corners:} each corner is cut at the strip's cut marks and joined by four short 18~AWG jumpers
+    (\id{WIR-1}): \SI{12}{V}, data (DO to DI), backup data (BO to BI) and ground (Figure~\ref{fig:corner}).
+    Each cut end is sealed with \SI{1.25}{in} of adhesive-lined 1/2'' heat shrink (\id{HS-1}): six per module.
+  \item \textbf{Electrically} the module behaves as one uncut reel; the jumpers carry current better than the
+    strip's own copper.
+  \item \textbf{Power:} fed at the input end only, through the input plug's power leads (12~V constant-current
+    LEDs tolerate the drop along the strip; checked on the pilot, and the far-end ``voltage compensation''
+    pigtail is in reserve).
+  \item \textbf{Data:} modules plug together: module $k$'s output plug into module $k{+}1$'s input plug.  The
+    first module's backup input BI is tied to ground.
+  \item \textbf{Mounting:} the two slats of a module are its carrier; a module comes off with its clips.
+\end{itemize}
+
+\begin{figure}[!htbp]
+  \centering
+  \input{figures/w-module}
+  \caption{W-module: one reel \id{LED-1} as four columns of 37 on two slats \id{FR-3} (LEDs not all drawn).
+    Arrows: data direction.  C1--C3: soldered corners (Figure~\ref{fig:corner}); the two spare LEDs are cut out
+    at C1.  Input and output are the reel's factory plugs; power enters at the input.}
+  \label{fig:w-module}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \input{figures/corner}
+  \caption{Corner joint (C1 shown).  Four 18~AWG jumpers \id{WIR-1}: \SI{12}{V}, data (DO to DI), backup data
+    (BO to BI), ground.  Each cut end sealed with 1/2'' adhesive heat shrink \id{HS-1}.}
+  \label{fig:corner}
+\end{figure}
+
+\section{Power fan-out}
+
+Figure~\ref{fig:fanout} shows the power path; Figure~\ref{fig:runs} the layout along the top rail.
+\begin{itemize}
+  \item \textbf{Mains:} a plug-ended cord (\id{HD-3}) to a GFCI outdoor outlet, spliced to the supply's AC leads
+    in a weatherproof splice (\id{HD-4}).  The house breaker protects the cord.
+  \item \textbf{Supply} \id{PS-1}: HLG-600H-12B, \SI{12}{V} \SI{40}{A} \SI{480}{W}, IP67, fanless, universal input
+    \SIrange{90}{305}{V} AC.  Its dimming wires are unused: capped and insulated (open means full output).
+  \item \textbf{Links} (\id{HD-1}): the supply's output to the two fuse blocks' + studs and the two bus bars'
+    studs; heavy enough for the supply's current limit, so nothing upstream of the fuses needs its own fuse.
+  \item \textbf{Fuse blocks} \id{FB-1} (two, 8 circuits each) with one \SI{5}{A} ATO fuse \id{FU-1} per module:
+    block A feeds M01--M07, block B M08--M14; one spare circuit each.
+  \item \textbf{Ground bus bars} \id{BB-1} (two, 12 screws each): one per block.
+  \item \textbf{Home runs:} one 18~AWG pair (\id{WIR-1}) per module, red from its fuse to the module's input plug
+    power lead, black from there back to the bus bar; ring terminals \id{HD-2} at the blocks, soldered and
+    heat-shrunk (\id{HS-2}) at the pigtail.  Runs are at most about \SI{1.5}{m}.
+  \item \textbf{Protection by layers,} each guarding the wiring after it: the house breaker (cord); the supply's
+    own current limit (links); a \SI{5}{A} fuse (each home run and module).
+  \item \textbf{Rule:} switch off before plugging or unplugging a module (there are no bulk capacitors).
+\end{itemize}
+
+\begin{figure}[!htbp]
+  \centering
+  \input{figures/fanout}
+  \caption{Power fan-out.  Mains cord \id{HD-3} and splice \id{HD-4} to the supply \id{PS-1}; links \id{HD-1} to
+    two fuse blocks \id{FB-1} with \SI{5}{A} fuses \id{FU-1} and two ground bus bars \id{BB-1}; one 18~AWG home
+    run \id{WIR-1} per module to its input plug.  Data (dashed) runs from the controller's level shifter
+    \id{IC-1} through the modules' plugs.}
+  \label{fig:fanout}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \input{figures/runs}
+  \caption{Top rail, seen from the front: module inputs (filled) and outputs (open), the plug-to-plug data chain,
+    and the home runs \id{WIR-1} from the covered box \id{HD-5} (fuse blocks \id{FB-1}, bus bars \id{BB-1}) behind
+    the middle of the top rail.  Horizontal scale in inches from the LED area's left edge.}
+  \label{fig:runs}
+\end{figure}
+
+\section{Numbers}
+\label{sec:numbers}
+
+BTF-LIGHTING rates a reel at \SI{12}{V} \SI{3}{A} (\SI{36}{W}) at full white; a module uses 148 of its 150 LEDs.
+
+\begin{center}
+\begin{tabular}{@{}lrrrr@{}}
+  \toprule
+  case & per module & panel at \SI{12}{V} & panel power & supply load \\
+  \midrule
+  full white, 100\,\%     & \SI{3.0}{A} & \SI{42}{A} & \SI{504}{W} & 105\,\% (over) \\
+  75\,\% cap              & \SI{2.2}{A} & \SI{32}{A} & \SI{378}{W} & 79\,\% \\
+  \textbf{50\,\% cap (design)} & \SI{1.5}{A} & \SI{21}{A} & \SI{252}{W} & 52\,\% \\
+  typical scene, 50\,\%   & $<\SI{0.5}{A}$ & $<\SI{6}{A}$ & $<\SI{70}{W}$ & $<15\,\%$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+  \item \textbf{At the wall:} about \SI{280}{W} at the 50\,\% cap, about \SI{2.5}{A} at \SI{120}{V}.
+  \item \textbf{Fuses:} \SI{5}{A} is the next standard size above 125\,\% of \SI{3}{A}; it never blows in normal
+    use and protects 18~AWG.
+  \item \textbf{Home-run drop:} \SI{1.5}{m} of 18~AWG out and back is about \SI{0.06}{\ohm}:
+    \SI{0.1}{V} at \SI{1.5}{A}, \SI{0.2}{V} at \SI{3}{A}.
+  \item \textbf{Along a module} (fed at one end): about \SI{1}{V} at the 50\,\% cap, about \SI{2}{V} at full
+    white (estimate); WS2815 LEDs are constant-current and hold their color to about \SI{10}{V}.  To be measured
+    on the pilot.
+  \item \textbf{Data:} one chain of 2072 pixels takes about \SI{62}{ms} per frame (about 16 frames per second);
+    splitting into more chains, or one line per module from the Zynq, is a matter of unplugging joints.
+\end{itemize}
+
+\section{Pilot}
+\label{sec:pilot}
+
+One reel, ordered 2026-10-19 (Amazon order~1).  Before cutting: light the whole reel from a lab \SI{12}{V}
+supply with current limiting (start at \SI{1}{A}; about \SI{3.5}{A} for full white), check every LED and the
+color order, and measure the far end.  Then: measure the pitch over 37 LEDs, fit a clip, cut and solder the
+three corners, seal, mount on two slats, and repeat the test, including the voltage at the far end at the
+50\,\% cap.
+
+\section{Bill of materials}
+\label{sec:bom}
+
+Prices as read 2026-10-18/19, before shipping and tax.  Order: P = Amazon pilot (placed), A2 = Amazon order~2
+(after the pilot), DK = DigiKey order v1, HD = Home Depot (when laying out), OH = on hand.
+Links: \url{https://www.amazon.com/dp/<ASIN>}.
+
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}Xrlll r@{}}
+  \toprule
+  ID & item & qty & order & source & part / ASIN & total \\
+  \midrule
+  \id{LED-1} & BTF-LIGHTING WS2815, \SI{12}{V}, \SI{5}{m}, 150 LEDs, IP65, gold wire, backup data & 1+14 & P, A2 & Amazon & B07LG54F4W & \$449.85 \\
+  \id{MNT-1} & BTF-LIGHTING transparent strip clips, 12~mm, 100 + screws per pack & 2 & P & Amazon & B0DM8VL3R4 & \$27.98 \\
+  \id{WIR-1} & TUOFENG 18~AWG silicone wire, tinned copper, 50~ft red + 50~ft black per pack & 1+1 & P, A2 & Amazon & B07FMWNF3J & \$33.98 \\
+  \id{HS-1} & XHF heat shrink 1/2'', 3:1 adhesive-lined, black, 10~ft & 1 & P & Amazon & B0919K23RX & \$6.29 \\
+  \id{HS-2} & XHF heat shrink 3/16'', 3:1 adhesive-lined, black, 20~ft & 1 & P & Amazon & B0919F4YFZ & \$7.99 \\
+  \id{IC-1} & SN74AHCT125N, DIP-14, generic 10-pack (pilot, spares) & 1 & P & Amazon & B08R6BCSYC & \$7.99 \\
+  \id{IC-2} & SN74AHCT125N, Texas Instruments (installation) & 5 & DK & DigiKey & 296-4655-5-ND & \$5.00 \\
+  \id{PS-1} & Mean Well HLG-600H-12B, \SI{12}{V} \SI{40}{A} \SI{480}{W}, IP67 & 1 & DK & DigiKey & 1866-2567-ND & \$209.00 \\
+  \id{FB-1} & Fuse block, 8 circuits, ATO/ATC, \#8-32 outputs, \#10-32 stud, cover & 2 & A2 & Amazon & B0F7P88MZ2 & \$47.98 \\
+  \id{BB-1} & RVBOATPAT ground bus bar, $12\times$\#8 screws, 1/4'' stud, cover & 2 & A2 & Amazon & B0F6SC5C3Q & \$19.96 \\
+  \id{FU-1} & Littelfuse 0287005.PXCN, \SI{5}{A} ATO fuse & 20 & DK & DigiKey & F4197-ND & \$6.66 \\
+  \midrule
+  \id{FR-1} & 2x6, 8~ft (two cut 77'', two 56'') & 4 & OH & lumber & & -- \\
+  \id{FR-2} & 2x4, 8~ft (two rails, about 74'') & 2 & OH & lumber & & -- \\
+  \id{FR-3} & 1x2, 8~ft (slats, 56'' each; 28 + 2 spare) & 30 & OH & lumber & & -- \\
+  \midrule
+  \id{HD-1} & Links, supply to blocks and bus bars, 12--10~AWG, ring terminals (\#10, 1/4'') & -- & HD & Home Depot & & -- \\
+  \id{HD-2} & Ring terminals, \#8, 22--16~AWG, heat-shrink sealed (about 50) & -- & HD & Home Depot & & -- \\
+  \id{HD-3} & Plug-ended outdoor cord, 3 conductors (or one on hand) & 1 & HD & Home Depot & & -- \\
+  \id{HD-4} & Weatherproof splice for the supply's AC leads & 1 & HD & Home Depot & & -- \\
+  \id{HD-5} & Covered box for fuse blocks and bus bars & 1 & HD & Home Depot & & -- \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent Totals: Amazon pilot \$97.23 (placed); Amazon order~2 \$504.79; DigiKey v1 \$220.66; together \$822.68,
+plus Home Depot items.
+
+\end{document}

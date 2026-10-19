@@ -1,0 +1,53 @@
+% W-module: four columns of 37 on two slats, data path, corners C1-C3, plugs.  Schematic: only some LEDs drawn
+% (the first and last 5 of each column), vertical scale compressed.
+\begin{tikzpicture}[font=\footnotesize,
+    callout/.style={-{Stealth[length=4pt]}, thin},
+    flow/.style={-{Stealth[length=6pt]}, very thick, orange!80!black}]
+  \def\dx{1.6}   % column spacing (drawing units, cm)
+  \def\dy{0.32}  % LED spacing
+  % slats: two, each under two columns
+  \foreach \s in {0,1} {
+    \pgfmathsetmacro{\xc}{(2*\s+0.5)*\dx}
+    \fill[brown!25] (\xc-1.25,-0.6) rectangle (\xc+1.25,12.6);
+    \draw[brown!70!black] (\xc-1.25,-0.6) rectangle (\xc+1.25,12.6);
+  }
+  \node[brown!60!black, font=\scriptsize] at (0.5*\dx,-1.0) {\id{FR-3}};
+  \node[brown!60!black, font=\scriptsize] at (2.5*\dx,-1.0) {\id{FR-3}};
+  % columns of LEDs (strip body + LEDs: top 5 and bottom 5 drawn, dots in between)
+  \foreach \c in {0,...,3} {
+    \pgfmathsetmacro{\x}{\c*\dx}
+    \fill[black!75] (\x-0.18,0.2) rectangle (\x+0.18,11.8);
+    \foreach \i in {0,...,4} {
+      \fill[white] (\x-0.1,11.5-\i*\dy-0.1) rectangle (\x+0.1,11.5-\i*\dy+0.1);
+      \fill[white] (\x-0.1,0.5+\i*\dy-0.1) rectangle (\x+0.1,0.5+\i*\dy+0.1);
+    }
+    \node[white, font=\scriptsize] at (\x,6) {$\vdots$};
+    \node[font=\scriptsize] at (\x,13.1) {col.~\the\numexpr\c+1\relax};
+  }
+  % data flow arrows along each column
+  \draw[flow] (0.45,10.5) -- (0.45,1.5);
+  \draw[flow] (\dx+0.45,1.5) -- (\dx+0.45,10.5);
+  \draw[flow] (2*\dx+0.45,10.5) -- (2*\dx+0.45,1.5);
+  \draw[flow] (3*\dx+0.45,1.5) -- (3*\dx+0.45,10.5);
+  % corners
+  \draw[thick, red!70!black] (0,0.2) -- (0,-0.25) -- (\dx,-0.25) -- (\dx,0.2);
+  \draw[thick, red!70!black] (\dx,11.8) -- (\dx,12.25) -- (2*\dx,12.25) -- (2*\dx,11.8);
+  \draw[thick, red!70!black] (2*\dx,0.2) -- (2*\dx,-0.25) -- (3*\dx,-0.25) -- (3*\dx,0.2);
+  \node[red!70!black, below] at (0.5*\dx,-0.3) {C1};
+  \node[red!70!black, above] at (1.5*\dx,12.3) {C2};
+  \node[red!70!black, below] at (2.5*\dx,-0.3) {C3};
+  % plugs
+  \fill[black] (-0.25,11.8) rectangle (0.25,12.4);
+  \fill[black] (3*\dx-0.25,11.8) rectangle (3*\dx+0.25,12.4);
+  % callouts
+  \draw[callout] (-2.0,13.6) node[left, align=right] {input plug\\(factory end)\\power + data in} -- (-0.05,12.4);
+  \draw[callout] (3*\dx+2.2,13.6) node[right, align=left] {output plug\\(factory end)\\to next module} -- (3*\dx+0.1,12.4);
+  \draw[callout] (-2.0,0.9) node[left, align=right] {2 spare LEDs\\cut out at C1} -- (-0.1,0.3);
+  \draw[callout] (3*\dx+2.2,6) node[right, align=left] {\id{LED-1}\\37 LEDs per column,\\33.3~mm apart} -- (3*\dx+0.2,6);
+  \draw[callout] (3*\dx+2.2,1.0) node[right, align=left] {soldered corner\\4 jumpers \id{WIR-1}\\seals \id{HS-1}} -- (2.5*\dx,-0.25);
+  \draw[callout] (-2.0,6.5) node[left, align=right] {\id{MNT-1}\\3 clips per column} -- (-0.2,6.5);
+  % home run arrives at the input plug
+  \draw[thick, red] (0.1,12.4) -- (0.1,13.6) -- (-0.6,14.6);
+  \draw[thick, black] (-0.1,12.4) -- (-0.1,13.5) -- (-0.8,14.4);
+  \node[font=\scriptsize, align=right, left] at (-0.8,14.8) {home run \id{WIR-1}};
+\end{tikzpicture}
